@@ -11,6 +11,23 @@ build-parameters:
       commands:
         - npx -p @sap/cds-dk cds build --production
 modules:
+  - name: robby-destination-content
+    type: com.sap.application.content
+    parameters:
+      content:
+        subaccount:
+          existing_destinations_policy: update
+          destinations:
+          - Name: robby-sdm
+            Authentication: OAuth2UserTokenExchange
+            ServiceInstanceName: robby-sdm-instance
+            ServiceKeyName: key
+    requires:
+    - name: robby-sdm-instance
+      parameters:
+        service-key:
+          name: key
+
   - name: dms-robby-srv
     type: nodejs
     path: gen/srv
