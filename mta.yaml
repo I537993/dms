@@ -1,0 +1,33 @@
+---
+_schema-version: '3.1'
+ID: dms-robby
+version: 0.0.1
+description: ""
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npx -p @sap/cds-dk cds build --production
+modules:
+  - name: dms-robby-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires: []
+resources:
+  - name: robby-sdm-instance
+    optional: false
+    active: true  
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: sdm
+      service-plan: free

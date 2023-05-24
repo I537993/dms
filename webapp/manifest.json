@@ -1,5 +1,8 @@
 {
     "_version": "1.49.0",
+    "sap.cloud": {
+        "public": true
+    },
     "sap.app": {
         "id": "dmsrobby",
         "type": "application",
