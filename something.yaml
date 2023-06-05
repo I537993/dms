@@ -1,0 +1,70 @@
+_schema-version: "3.2"
+ID: example
+version: 0.0.1
+modules:
+- name: myapp
+  path: ./myapp
+  type: javascript.nodejs
+  requires:
+  - name: xsuaa_service
+  provides:
+  - name: myapp-route
+    properties:
+      url: ${default-url} #generated during deployment
+- name: destination-content
+  type: com.sap.application.content
+  requires:
+  - name: xsuaa_service
+    parameters:
+      service-key:
+        name: xsuaa_service-key
+  - name: destination-service
+    parameters:
+      content-target: true
+  - name: myapp-route
+  build-parameters:
+    no-source: true
+  parameters:
+    content:
+      subaccount:
+        existing_destinations_policy: update
+        destinations:
+        - Name: myappOauth
+          URL: ~{myapp-route/url}
+          Authentication: OAuth2ClientCredentials
+          TokenServiceInstanceName: xsuaa_service
+          TokenServiceKeyName: xsuaa_service-key
+          myAdditionalProp: myValue
+        - Name: workflowOauthJwtBearer
+          Authentication: OAuth2JWTBearer
+          ServiceInstanceName: workflow_service
+          ServiceKeyName: workflow_service-key
+      instance:
+        existing_destinations_policy: update
+        destinations:
+        - Name: workflowBasicAuthentication
+          Authentication: BasicAuthentication
+          ServiceInstanceName: workflow_service
+          ServiceKeyName: workflow_service-key
+          myAdditionalProp: myValue
+resources:
+- name: xsuaa_service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: xsuaa
+    service-name: xsuaa_service
+    service-plan: application
+    config:
+      xsappname: "myApp"
+- name: workflow_service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: workflow
+    service-name: workflow_service
+    service-plan: lite
+- name: destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: destination
+    service-name: my-destination-service
+    service-plan: lite

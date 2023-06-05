@@ -1,50 +1,104 @@
----
-_schema-version: '3.1'
+_schema-version: "3.1"
 ID: dms-robby
 version: 0.0.1
-description: ""
+modules:
+### DESTINATION GACD ###
+- name: dms-robby-destination-content
+  type: com.sap.application.content
+  build-parameters:
+    no-source: true # must be set so that module path is not required.
+  requires: 
+  - name: dms-robby-xsuaa
+  - name: dms-robby-repo-host
+  - name: robby-sdm-instance
+  - name: dms-robby-destination-service
+    parameters:
+      content-target: true
+  parameters:
+    content:
+      instance:
+        existing_destinations_policy: update
+        destinations:
+        - Name: repo
+          ServiceInstanceName: dms-robby-repo-host
+          ServiceKeyName: repo-key
+          sap.cloud.service: robby.dms.app # set this in your manifest.json
+        - Authentication: OAuth2UserTokenExchange
+          Name: sdm
+          URL: https://sap.com/DUMMY_URL
+          ServiceInstanceName: robby-sdm-instance
+          ServiceKeyName: sdm-key
+        - Authentication: OAuth2UserTokenExchange
+          Name: uaa
+          sap.cloud.service: robby.dms.app # set this in your manifest.json
+          ServiceInstanceName: dms-robby-xsuaa
+          ServiceKeyName: xsuaa-key
+### HTML5 GACD ###
+- name: dms-robby-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: dms-robby-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - dmsrobby.zip
+      name: dmsrobby
+      target-path: resources/
+### HTML5 CONTENT ###
+- name: dmsrobby
+  type: html5
+  path: .
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+# SDM SERVICE #
+- name: robby-sdm-instance
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: sdm
+    service-plan: free
+    service-keys: 
+      - name: sdm-key
+  active: true
+# XSUAA SERVICE #
+- name: dms-robby-xsuaa
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: xsuaa
+    service-plan: application
+    service-keys: 
+      - name: xsuaa-key
+# HTML5 REPO SERVICE #
+- name: dms-robby-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-plan: app-host
+    service-keys: 
+    - name: repo-key
+# DESTINATION SERVICE #
+- name: dms-robby-destination-service # The runtime tries to resolve a destination in the order: Subaccount Level → Service Instance Level.
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+    service: destination
+    service-name: dms-robby-destination-service
+    service-plan: lite
 parameters:
+  deploy_mode: html5-repo
   enable-parallel-deployments: true
 build-parameters:
   before-all:
-    - builder: custom
-      commands:
-        - npx -p @sap/cds-dk cds build --production
-modules:
-  - name: robby-destination-content
-    type: com.sap.application.content
-    parameters:
-      content:
-        subaccount:
-          existing_destinations_policy: update
-          destinations:
-          - Name: robby-sdm
-            Authentication: OAuth2UserTokenExchange
-            ServiceInstanceName: robby-sdm-instance
-            ServiceKeyName: key
-    requires:
-    - name: robby-sdm-instance
-      parameters:
-        service-key:
-          name: key
-
-  - name: dms-robby-srv
-    type: nodejs
-    path: gen/srv
-    parameters:
-      buildpack: nodejs_buildpack
-    build-parameters:
-      builder: npm-ci
-    provides:
-      - name: srv-api # required by consumers of CAP services (e.g. approuter)
-        properties:
-          srv-url: ${default-url}
-    requires: []
-resources:
-  - name: robby-sdm-instance
-    optional: false
-    active: true  
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: sdm
-      service-plan: free
+  - builder: custom
+    commands:
+    - npx -p @sap/cds-dk cds build --production

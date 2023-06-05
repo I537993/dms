@@ -10,6 +10,6 @@ sap.ui.define([
         return Controller.extend("dmsrobby.controller.Home", {
             onInit: function () {
 
-            }
+            },
         });
     });
