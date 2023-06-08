@@ -15,10 +15,11 @@
       "destination": "ui5"
     },
     {
-      "source": "^/comsapecmreuse.comsapecmreusedocumentTable/(.*)$",
-      "target": "/03a04f75-387c-4dad-91d3-918b76bfec42.comsapecmreuse.comsapecmreusedocumentTable/$1",
+      "source": "^comsapecmreuse.comsapecmreusedocumentTable/(.*)$",
+      "target": "97d0904f-2b5b-4e90-a8f2-ecd7945473b6.comsapecmreuse.comsapecmreusedocumentTable/$1",
       "authenticationType": "xsuaa",
-      "destination": "sdmtest"
+      "service": "com.sap.ecm.reuse",
+      "endpoint": "ecmservice"
     },
     {
       "source": "^(.*)$",

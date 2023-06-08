@@ -2,10 +2,10 @@
     "_version": "1.49.0",
     "sap.cloud": {
         "public": true,
-        "service": "robby.dms.app"
+        "service": "com.manis.document"
     },
     "sap.app": {
-        "id": "dmsrobby",
+        "id": "com.manis.document",
         "type": "application",
         "i18n": "i18n/i18n.properties",
         "applicationVersion": {
@@ -124,13 +124,14 @@
             "documentTable": {
                 "name": "com.sap.ecm.reuse.documentTable",
                 "settings": {
-                    "repositoryId": "0d0d3f3e-8291-4290-abf0-fc2a39a6c1aa",
-                    "objectId": "d3f799700015834383b82646"
+                    "repositoryId": "2df12541-fd45-4e00-b758-ab542e4f174a",
+                    "objectId": "37e4947000b00f957e5f0846",
+                    "destinationPath": "/97d0904f-2b5b-4e90-a8f2-ecd7945473b6.comsapecmreuse.comsapecmreusedocumentTable/api"
                 }
             }
         },
         "resourceRoots": {
-            "com.sap.ecm.reuse.documentTable": "./../03a04f75-387c-4dad-91d3-918b76bfec42.comsapecmreuse.comsapecmreusedocumentTable"
+            "com.sap.ecm.reuse.documentTable": "./../97d0904f-2b5b-4e90-a8f2-ecd7945473b6.comsapecmreuse.comsapecmreusedocumentTable"
         }
     }
 }

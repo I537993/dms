@@ -10,7 +10,7 @@ modules:
   requires: 
   - name: dms-robby-xsuaa
   - name: dms-robby-repo-host
-  - name: robby-sdm-instance
+  - name: document-management-integration
   - name: dms-robby-destination-service
     parameters:
       content-target: true
@@ -22,15 +22,15 @@ modules:
         - Name: repo
           ServiceInstanceName: dms-robby-repo-host
           ServiceKeyName: repo-key
-          sap.cloud.service: robby.dms.app # set this in your manifest.json
+          sap.cloud.service: com.manis.document # set this in your manifest.json
         - Authentication: OAuth2UserTokenExchange
           Name: sdm
           URL: https://sap.com/DUMMY_URL
-          ServiceInstanceName: robby-sdm-instance
-          ServiceKeyName: sdm-key
+          ServiceInstanceName: document-management-integration
+          ServiceKeyName: key
         - Authentication: OAuth2UserTokenExchange
           Name: uaa
-          sap.cloud.service: robby.dms.app # set this in your manifest.json
+          sap.cloud.service: com.manis.document # set this in your manifest.json
           ServiceInstanceName: dms-robby-xsuaa
           ServiceKeyName: xsuaa-key
 ### HTML5 GACD ###
@@ -61,14 +61,8 @@ modules:
     supported-platforms: []
 resources:
 # SDM SERVICE #
-- name: robby-sdm-instance
-  type: org.cloudfoundry.managed-service
-  parameters:
-    service: sdm
-    service-plan: free
-    service-keys: 
-      - name: sdm-key
-  active: true
+- name: document-management-integration
+  type: org.cloudfoundry.existing-service
 # XSUAA SERVICE #
 - name: dms-robby-xsuaa
   type: org.cloudfoundry.managed-service
@@ -97,8 +91,3 @@ resources:
 parameters:
   deploy_mode: html5-repo
   enable-parallel-deployments: true
-build-parameters:
-  before-all:
-  - builder: custom
-    commands:
-    - npx -p @sap/cds-dk cds build --production
