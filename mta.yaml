@@ -23,8 +23,7 @@ modules:
           ServiceInstanceName: dms-robby-repo-host
           ServiceKeyName: repo-key
           sap.cloud.service: com.manis.document # set this in your manifest.json
-        - Authentication: OAuth2UserTokenExchange
-          Name: sdm
+        - Name: sdm
           URL: https://sap.com/DUMMY_URL
           ServiceInstanceName: document-management-integration
           ServiceKeyName: key
